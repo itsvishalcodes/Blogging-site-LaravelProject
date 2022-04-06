@@ -1,12 +1,37 @@
-@extends('admin.layouts.app')
+@extends('layouts.app')
 
 @section('content')
-    <h1>@lang('posts.create')</h1>
+    <div class="container">
+        <div class="row">
 
-    {!! Form::open(['route' => ['admin.posts.store'], 'method' =>'POST']) !!}
-        @include('admin/posts/_form')
+            <div class="col-md-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h2>
+                            Create Post
 
-        {{ link_to_route('admin.posts.index', __('forms.actions.back'), [], ['class' => 'btn btn-secondary']) }}
-        {!! Form::submit(__('forms.actions.save'), ['class' => 'btn btn-primary']) !!}
-    {!! Form::close() !!}
+                            <a href="{{ url('admin/posts') }}" class="btn btn-default pull-right">Go Back</a>
+                        </h2>
+                    </div>
+
+                    <div class="panel-body">
+                        {!! Form::open(['url' => '/admin/posts', 'class' => 'form-horizontal', 'role' => 'form']) !!}
+
+                            @include('admin.posts._form')
+
+                            <div class="form-group">
+                                <div class="col-md-8 col-md-offset-2">
+                                    <button type="submit" class="btn btn-primary">
+                                        Create
+                                    </button>
+                                </div>
+                            </div>
+
+                        {!! Form::close() !!}
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
 @endsection

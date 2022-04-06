@@ -18,8 +18,7 @@ return [
     'after'                => 'The :attribute must be a date after :date.',
     'after_or_equal'       => 'The :attribute must be a date after or equal to :date.',
     'alpha'                => 'The :attribute may only contain letters.',
-    'alpha_dash'           => 'The :attribute may only contain letters, numbers, dashes and underscores.',
-    'alpha_name'           => 'The :attribute must be formatted like a name without unexpected characters or punctuation.',
+    'alpha_dash'           => 'The :attribute may only contain letters, numbers, and dashes.',
     'alpha_num'            => 'The :attribute may only contain letters and numbers.',
     'array'                => 'The :attribute must be an array.',
     'before'               => 'The :attribute must be a date before :date.',
@@ -43,38 +42,12 @@ return [
     'exists'               => 'The selected :attribute is invalid.',
     'file'                 => 'The :attribute must be a file.',
     'filled'               => 'The :attribute field must have a value.',
-    'gt'                   => [
-        'numeric' => 'The :attribute must be greater than :value.',
-        'file'    => 'The :attribute must be greater than :value kilobytes.',
-        'string'  => 'The :attribute must be greater than :value characters.',
-        'array'   => 'The :attribute must have more than :value items.',
-    ],
-    'gte'                  => [
-        'numeric' => 'The :attribute must be greater than or equal :value.',
-        'file'    => 'The :attribute must be greater than or equal :value kilobytes.',
-        'string'  => 'The :attribute must be greater than or equal :value characters.',
-        'array'   => 'The :attribute must have :value items or more.',
-    ],
     'image'                => 'The :attribute must be an image.',
     'in'                   => 'The selected :attribute is invalid.',
     'in_array'             => 'The :attribute field does not exist in :other.',
     'integer'              => 'The :attribute must be an integer.',
     'ip'                   => 'The :attribute must be a valid IP address.',
-    'ipv4'                 => 'The :attribute must be a valid IPv4 address.',
-    'ipv6'                 => 'The :attribute must be a valid IPv6 address.',
     'json'                 => 'The :attribute must be a valid JSON string.',
-    'lt'                   => [
-        'numeric' => 'The :attribute must be less than :value.',
-        'file'    => 'The :attribute must be less than :value kilobytes.',
-        'string'  => 'The :attribute must be less than :value characters.',
-        'array'   => 'The :attribute must have less than :value items.',
-    ],
-    'lte'                  => [
-        'numeric' => 'The :attribute must be less than or equal :value.',
-        'file'    => 'The :attribute must be less than or equal :value kilobytes.',
-        'string'  => 'The :attribute must be less than or equal :value characters.',
-        'array'   => 'The :attribute must not have more than :value items.',
-    ],
     'max'                  => [
         'numeric' => 'The :attribute may not be greater than :max.',
         'file'    => 'The :attribute may not be greater than :max kilobytes.',
@@ -90,7 +63,6 @@ return [
         'array'   => 'The :attribute must have at least :min items.',
     ],
     'not_in'               => 'The selected :attribute is invalid.',
-    'not_regex'            => 'The :attribute format is invalid.',
     'numeric'              => 'The :attribute must be a number.',
     'present'              => 'The :attribute field must be present.',
     'regex'                => 'The :attribute format is invalid.',
@@ -113,8 +85,6 @@ return [
     'unique'               => 'The :attribute has already been taken.',
     'uploaded'             => 'The :attribute failed to upload.',
     'url'                  => 'The :attribute format is invalid.',
-    'can_be_author'        => "Selected user can not be an author",
-    'current_password'     => "The current password is invalid.",
 
     /*
     |--------------------------------------------------------------------------
@@ -128,11 +98,8 @@ return [
     */
 
     'custom' => [
-        'can_be_author' => [
-            'accepted' => "Selected author is invalid.",
-        ],
-        'current_password' => [
-            'accepted' => "The current password is invalid.",
+        'attribute-name' => [
+            'rule-name' => 'custom-message',
         ],
     ],
 
@@ -147,43 +114,6 @@ return [
     |
     */
 
-    'attributes'           => [
-        'name'                  => 'Name',
-        'username'              => 'Username',
-        'email'                 => 'Email',
-        'first_name'            => 'First name',
-        'last_name'             => 'Last name',
-        'current_password'      => 'Current password',
-        'password'              => 'Password',
-        'password_confirmation' => 'Password confirmation',
-        'city'                  => 'City',
-        'country'               => 'Country',
-        'address'               => 'Address',
-        'phone'                 => 'Phone',
-        'mobile'                => 'Mobile',
-        'age'                   => 'Age',
-        'sex'                   => 'Sex',
-        'gender'                => 'Gender',
-        'day'                   => 'Day',
-        'month'                 => 'Month',
-        'year'                  => 'Year',
-        'hour'                  => 'Hour',
-        'minute'                => 'Minute',
-        'second'                => 'Second',
-        'title'                 => 'Title',
-        'content'               => 'Content',
-        'description'           => 'Description',
-        'excerpt'               => 'Excerpt',
-        'date'                  => 'Date',
-        'time'                  => 'Time',
-        'available'             => 'Available',
-        'size'                  => 'Size',
-        'posted_at'             => 'Posted at',
-        'author_id'             => 'Author',
-        'post_id'               => 'Post',
-        'thumbnail_id'          => 'Thumbnail',
-    ],
-
-    'errors' => ":count error :|:count errors : "
+    'attributes' => [],
 
 ];

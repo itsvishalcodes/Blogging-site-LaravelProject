@@ -1,20 +1,37 @@
-@extends('admin.layouts.app')
+@extends('layouts.app')
 
 @section('content')
-    <p>@lang('posts.show') : {{ link_to_route('posts.show', route('posts.show', $post), $post) }}</p>
+    <div class="container">
+        <div class="row">
 
-    @include('admin/posts/_thumbnail')
+            <div class="col-md-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h2>
+                            Edit Post
 
-    {!! Form::model($post, ['route' => ['admin.posts.update', $post], 'method' =>'PUT']) !!}
-        @include('admin/posts/_form')
+                            <a href="{{ url('admin/posts') }}" class="btn btn-default pull-right">Go Back</a>
+                        </h2>
+                    </div>
 
-        <div class="pull-left">
-            {{ link_to_route('admin.posts.index', __('forms.actions.back'), [], ['class' => 'btn btn-secondary']) }}
-            {!! Form::submit(__('forms.actions.update'), ['class' => 'btn btn-primary']) !!}
+                    <div class="panel-body">
+                        {!! Form::model($post, ['method' => 'PUT', 'url' => "/admin/posts/{$post->id}", 'class' => 'form-horizontal', 'role' => 'form']) !!}
+
+                            @include('admin.posts._form')
+
+                            <div class="form-group">
+                                <div class="col-md-8 col-md-offset-2">
+                                    <button type="submit" class="btn btn-primary">
+                                        Update
+                                    </button>
+                                </div>
+                            </div>
+
+                        {!! Form::close() !!}
+                    </div>
+                </div>
+            </div>
+
         </div>
-    {!! Form::close() !!}
-
-    {!! Form::model($post, ['method' => 'DELETE', 'route' => ['admin.posts.destroy', $post], 'class' => 'form-inline pull-right', 'data-confirm' => __('forms.posts.delete')]) !!}
-        {!! Form::button('<i class="fa fa-trash" aria-hidden="true"></i> ' . __('posts.delete'), ['class' => 'btn btn-link text-danger', 'name' => 'submit', 'type' => 'submit']) !!}
-    {!! Form::close() !!}
+    </div>
 @endsection

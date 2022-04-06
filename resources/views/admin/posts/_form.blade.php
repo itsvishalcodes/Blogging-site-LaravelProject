@@ -1,51 +1,55 @@
+<div class="form-group{{ $errors->has('title') ? ' has-error' : '' }}">
+    {!! Form::label('title', 'Title', ['class' => 'col-md-2 control-label']) !!}
+
+    <div class="col-md-8">
+        {!! Form::text('title', null, ['class' => 'form-control', 'required', 'autofocus']) !!}
+
+        <span class="help-block">
+            <strong>{{ $errors->first('title') }}</strong>
+        </span>
+    </div>
+</div>
+
+<div class="form-group{{ $errors->has('body') ? ' has-error' : '' }}">
+    {!! Form::label('body', 'Body', ['class' => 'col-md-2 control-label']) !!}
+
+    <div class="col-md-8">
+        {!! Form::textarea('body', null, ['class' => 'form-control', 'required']) !!}
+
+        <span class="help-block">
+            <strong>{{ $errors->first('body') }}</strong>
+        </span>
+    </div>
+</div>
+
+<div class="form-group{{ $errors->has('category_id') ? ' has-error' : '' }}">
+    {!! Form::label('category_id', 'Category', ['class' => 'col-md-2 control-label']) !!}
+
+    <div class="col-md-8">
+        {!! Form::select('category_id', $categories, null, ['class' => 'form-control', 'required']) !!}
+
+        <span class="help-block">
+            <strong>{{ $errors->first('category_id') }}</strong>
+        </span>
+    </div>
+</div>
+
 @php
-    $posted_at = old('posted_at') ?? (isset($post) ? $post->posted_at->format('Y-m-d\TH:i') : null);
+    if(isset($post)) {
+        $tag = $post->tags->pluck('name')->all();
+    } else {
+        $tag = null;
+    }
 @endphp
 
-<div class="form-group">
-    {!! Form::label('title', __('posts.attributes.title')) !!}
-    {!! Form::text('title', null, ['class' => 'form-control' . ($errors->has('title') ? ' is-invalid' : ''), 'required']) !!}
+<div class="form-group{{ $errors->has('tags') ? ' has-error' : '' }}">
+    {!! Form::label('tags', 'Tag', ['class' => 'col-md-2 control-label']) !!}
 
-    @error('title')
-        <span class="invalid-feedback">{{ $message }}</span>
-    @enderror
-</div>
+    <div class="col-md-8">
+        {!! Form::select('tags[]', $tags, $tag, ['class' => 'form-control select2-tags', 'required', 'multiple']) !!}
 
-<div class="form-row">
-    <div class="form-group col-md-6">
-        {!! Form::label('author_id', __('posts.attributes.author')) !!}
-        {!! Form::select('author_id', $users, null, ['class' => 'form-control' . ($errors->has('author_id') ? ' is-invalid' : ''), 'required']) !!}
-
-        @error('author_id')
-            <span class="invalid-feedback">{{ $message }}</span>
-        @enderror
+        <span class="help-block">
+            <strong>{{ $errors->first('tags') }}</strong>
+        </span>
     </div>
-
-    <div class="form-group col-md-6">
-        {!! Form::label('posted_at', __('posts.attributes.posted_at')) !!}
-        <input type="datetime-local" name="posted_at" class="form-control {{ ($errors->has('posted_at') ? ' is-invalid' : '') }}" required value="{{ $posted_at }}">
-
-        @error('posted_at')
-            <span class="invalid-feedback">{{ $message }}</span>
-        @enderror
-    </div>
-</div>
-
-<div class="form-group">
-    {!! Form::label('thumbnail_id', __('posts.attributes.thumbnail')) !!}
-    {!! Form::select('thumbnail_id', $media, null, ['placeholder' => __('posts.placeholder.thumbnail'), 'class' => 'form-control' . ($errors->has('thumbnail_id') ? ' is-invalid' : '')]) !!}
-
-    @error('thumbnail_id')
-        <span class="invalid-feedback">{{ $message }}</span>
-    @enderror
-</div>
-
-
-<div class="form-group">
-    {!! Form::label('content', __('posts.attributes.content')) !!}
-    {!! Form::textarea('content', null, ['class' => 'form-control trumbowyg-form' . ($errors->has('content') ? ' is-invalid' : ''), 'required']) !!}
-
-    @error('content')
-        <span class="invalid-feedback">{{ $message }}</span>
-    @enderror
 </div>

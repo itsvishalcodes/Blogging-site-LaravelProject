@@ -3,76 +3,151 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\PostsRequest;
-use App\Models\MediaLibrary;
+use App\Http\Requests\PostRequest;
+use App\Models\Category;
 use App\Models\Post;
-use App\Models\User;
-use Illuminate\Http\RedirectResponse;
+use App\Models\Tag;
 use Illuminate\Http\Request;
-use Illuminate\View\View;
+use Illuminate\Support\Facades\Cache;
 
 class PostController extends Controller
 {
     /**
-     * Show the application posts index.
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
      */
-    public function index(): View
+    public function index()
     {
-        return view('admin.posts.index', [
-            'posts' => Post::withCount('comments', 'likes')->with('author')->latest()->paginate(50)
-        ]);
-    }
+        $posts = Post::with(['user', 'category', 'tags', 'comments'])->paginate(10);
 
-    /**
-     * Display the specified resource edit form.
-     */
-    public function edit(Post $post): View
-    {
-        return view('admin.posts.edit', [
-            'post' => $post,
-            'users' => User::authors()->pluck('name', 'id'),
-            'media' => MediaLibrary::first()->media()->get()->pluck('name', 'id')
-        ]);
+        return view('admin.posts.index', compact('posts'));
     }
 
     /**
      * Show the form for creating a new resource.
+     *
+     * @return \Illuminate\Http\Response
      */
-    public function create(Request $request): View
+    public function create()
     {
-        return view('admin.posts.create', [
-            'users' => User::authors()->pluck('name', 'id'),
-            'media' => MediaLibrary::first()->media()->get()->pluck('name', 'id')
-        ]);
+        $categories = Category::pluck('name', 'id')->all();
+        $tags = Tag::pluck('name', 'name')->all();
+
+        return view('admin.posts.create', compact('categories', 'tags'));
     }
 
     /**
      * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
      */
-    public function store(PostsRequest $request): RedirectResponse
+    public function store(PostRequest $request)
     {
-        $post = Post::create($request->only(['title', 'content', 'posted_at', 'author_id', 'thumbnail_id']));
+        $post = Post::create([
+            'title'       => $request->title,
+            'body'        => $request->body,
+            'category_id' => $request->category_id,
+        ]);
 
-        return redirect()->route('admin.posts.edit', $post)->withSuccess(__('posts.created'));
+        $tagsId = collect($request->tags)->map(function ($tag) {
+            return Tag::firstOrCreate(['name' => $tag])->id;
+        });
+
+        $post->tags()->attach($tagsId);
+        flash()->overlay('Post created successfully.');
+
+        return redirect('/admin/posts');
+    }
+
+    /**
+     * Display the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function show(Post $post)
+    {
+        $post = $post->load(['user', 'category', 'tags', 'comments']);
+
+        return view('admin.posts.show', compact('post'));
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit(Post $post)
+    {
+        if ($post->user_id != auth()->user()->id && auth()->user()->is_admin == false) {
+            flash()->overlay("You can't edit other peoples post.");
+
+            return redirect('/admin/posts');
+        }
+
+        $categories = Category::pluck('name', 'id')->all();
+        $tags = Tag::pluck('name', 'name')->all();
+
+        return view('admin.posts.edit', compact('post', 'categories', 'tags'));
     }
 
     /**
      * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
      */
-    public function update(PostsRequest $request, Post $post): RedirectResponse
+    public function update(PostRequest $request, Post $post)
     {
-        $post->update($request->only(['title', 'content', 'posted_at', 'author_id', 'thumbnail_id']));
+        // disbust cache
+        Cache::forget($post->etag);
 
-        return redirect()->route('admin.posts.edit', $post)->withSuccess(__('posts.updated'));
+        $post->update([
+            'title'       => $request->title,
+            'body'        => $request->body,
+            'category_id' => $request->category_id,
+        ]);
+
+        $tagsId = collect($request->tags)->map(function ($tag) {
+            return Tag::firstOrCreate(['name' => $tag])->id;
+        });
+
+        $post->tags()->sync($tagsId);
+        flash()->overlay('Post updated successfully.');
+
+        return redirect('/admin/posts');
     }
 
     /**
      * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
      */
-    public function destroy(Post  $post)
+    public function destroy(Post $post)
     {
-        $post->delete();
+        if ($post->user_id != auth()->user()->id && auth()->user()->is_admin == false) {
+            flash()->overlay("You can't delete other peoples post.");
 
-        return redirect()->route('admin.posts.index')->withSuccess(__('posts.deleted'));
+            return redirect('/admin/posts');
+        }
+
+        $post->delete();
+        flash()->overlay('Post deleted successfully.');
+
+        return redirect('/admin/posts');
+    }
+
+    public function publish(Post $post)
+    {
+        $post->is_published = ! $post->is_published;
+        $post->save();
+        flash()->overlay('Post changed successfully.');
+
+        return redirect('/admin/posts');
     }
 }

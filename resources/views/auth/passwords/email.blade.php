@@ -1,31 +1,46 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="row justify-content-md-center m-3">
-    <div class="col-md-6">
-        <h1>@lang('auth.reset_password')</h1>
+<div class="container">
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <div class="panel panel-default">
+                <div class="panel-heading">Reset Password</div>
+                <div class="panel-body">
+                    @if (session('status'))
+                        <div class="alert alert-success">
+                            {{ session('status') }}
+                        </div>
+                    @endif
 
-        @if (session('status'))
-            <x-alert type="success" :dismissible="true">
-                {{ session('status') }}
-            </x-alert>
-        @endif
+                    <form class="form-horizontal" role="form" method="POST" action="{{ route('password.email') }}">
+                        {{ csrf_field() }}
 
-        {!! Form::open(['route' => 'password.email', 'role' => 'form', 'method' => 'POST']) !!}
-            <div class="form-group">
-                {!! Form::label('email', __('validation.attributes.email'), ['class' => 'control-label']) !!}
-                {!! Form::email('email', old('email'), ['class' => 'form-control' . ($errors->has('email') ? ' is-invalid' : ''), 'required']) !!}
+                        <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
+                            <label for="email" class="col-md-4 control-label">E-Mail Address</label>
 
-                @error('email')
-                    <span class="invalid-feedback">{{ $message }}</span>
-                @enderror
+                            <div class="col-md-6">
+                                <input id="email" type="email" class="form-control" name="email" value="{{ old('email') }}" required>
+
+                                @if ($errors->has('email'))
+                                    <span class="help-block">
+                                        <strong>{{ $errors->first('email') }}</strong>
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <div class="col-md-6 col-md-offset-4">
+                                <button type="submit" class="btn btn-primary">
+                                    Send Password Reset Link
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
             </div>
-
-            <div class="form-group">
-                {!! Form::submit(__('auth.send_password_reset_link'), ['class' => 'btn btn-primary']) !!}
-            </div>
-
-        {!! Form::close() !!}
+        </div>
     </div>
 </div>
 @endsection
